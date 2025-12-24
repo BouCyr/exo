@@ -28,6 +28,7 @@
             display: none;
             text-align: center;
             color: #fff;
+            transition: color 0.5s ease, text-shadow 0.5s ease;
             text-shadow: 
                 0 0 5px #fff,
                 0 0 10px #fff,
@@ -36,6 +37,19 @@
                 0 0 40px #00ffff,
                 0 0 55px #00ffff,
                 0 0 75px #00ffff;
+        }
+        /* Neon Colors */
+        .neon-blue {
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff, 0 0 55px #00ffff, 0 0 75px #00ffff !important;
+        }
+        .neon-pink {
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff, 0 0 55px #ff00ff, 0 0 75px #ff00ff !important;
+        }
+        .neon-yellow {
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ffff00, 0 0 30px #ffff00, 0 0 40px #ffff00, 0 0 55px #ffff00, 0 0 75px #ffff00 !important;
+        }
+        .neon-green {
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #39ff14, 0 0 30px #39ff14, 0 0 40px #39ff14, 0 0 55px #39ff14, 0 0 75px #39ff14 !important;
         }
         .container {
             display: flex;
@@ -152,6 +166,8 @@
             "Waouh ! {n} et ça continue !"
         ];
 
+        const neonClasses = ['neon-blue', 'neon-pink', 'neon-yellow', 'neon-green'];
+
         let currentResult = 0;
         let activeInput = null;
         let score = 0;
@@ -160,6 +176,10 @@
             score++;
             const msgTemplate = scoreMessages[(score - 1) % scoreMessages.length];
             scoreContainer.textContent = msgTemplate.replace('{n}', score);
+            
+            // Cycle neon colors
+            scoreContainer.className = neonClasses[(score - 1) % neonClasses.length];
+
             if (score > 0) {
                 scoreContainer.style.display = 'block';
             }
