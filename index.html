@@ -172,8 +172,37 @@
     </div>
 
     <script>
-        const MULTIPLICATION_LIMIT = 5;
-        const ADDITION_LIMIT = 10;
+        let MULTIPLICATION_LIMIT = 5;
+        let ADDITION_LIMIT = 10;
+
+        // Load limits from localStorage if available
+        const savedLimits = localStorage.getItem('game-limits');
+        if (savedLimits) {
+            try {
+                const parsed = JSON.parse(savedLimits);
+                MULTIPLICATION_LIMIT = parsed.MULTIPLICATION_LIMIT || 5;
+                ADDITION_LIMIT = parsed.ADDITION_LIMIT || 10;
+            } catch (e) {
+                console.error("Failed to parse saved limits", e);
+            }
+        }
+
+        async function fetchLimits() {
+            try {
+                const response = await fetch('./limits.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    MULTIPLICATION_LIMIT = data.MULTIPLICATION_LIMIT || 5;
+                    ADDITION_LIMIT = data.ADDITION_LIMIT || 10;
+                    localStorage.setItem('game-limits', JSON.stringify(data));
+                }
+            } catch (e) {
+                // Silently fail as requested
+                console.log("Failed to fetch remote limits, using local/default ones.");
+            }
+        }
+
+        fetchLimits();
         const historyContainer = document.getElementById('history');
         const messageElement = document.getElementById('message');
         const scoreContainer = document.getElementById('score-container');

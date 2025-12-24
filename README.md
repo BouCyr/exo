@@ -6,7 +6,7 @@ A simple, mobile-first multiplication game for children with a neon aesthetic.
 - **PWA Ready**: Can be installed on your phone or desktop.
 - **Neon Aesthetic**: Fun colors that cycle as you progress.
 - **Score Tracking**: Encouraging messages in French.
-- **Customizable**: Change `TABLE_LIMIT` in `index.html` to adjust difficulty.
+- **Customizable**: Change limits in `limits.json` to adjust difficulty.
 
 ## Deployment to GitHub Pages
 1. Go to your repository on GitHub.
