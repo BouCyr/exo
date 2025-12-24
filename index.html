@@ -203,7 +203,19 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW registered!', reg))
+                    .then(reg => {
+                        console.log('SW registered!', reg);
+                        // Check for updates
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New content is available, reload the page
+                                    window.location.reload();
+                                }
+                            });
+                        });
+                    })
                     .catch(err => console.log('SW registration failed: ', err));
             });
         }
