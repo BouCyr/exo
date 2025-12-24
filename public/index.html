@@ -149,6 +149,7 @@
     </div>
 
     <script>
+        const TABLE_LIMIT = 5;
         const historyContainer = document.getElementById('history');
         const messageElement = document.getElementById('message');
         const scoreContainer = document.getElementById('score-container');
@@ -192,7 +193,7 @@
                 lines[0].remove();
             }
 
-            const a = Math.floor(Math.random() * 10) + 1;
+            const a = Math.floor(Math.random() * TABLE_LIMIT) + 1;
             const b = Math.floor(Math.random() * 10) + 1;
             currentResult = a * b;
 
