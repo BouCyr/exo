@@ -148,7 +148,8 @@
     </div>
 
     <script>
-        const TABLE_LIMIT = 5;
+        const MULTIPLICATION_LIMIT = 5;
+        const ADDITION_LIMIT = 10;
         const historyContainer = document.getElementById('history');
         const messageElement = document.getElementById('message');
         const scoreContainer = document.getElementById('score-container');
@@ -192,15 +193,27 @@
                 lines[0].remove();
             }
 
-            const a = Math.floor(Math.random() * TABLE_LIMIT) + 1;
-            const b = Math.floor(Math.random() * 10) + 1;
-            const result = a * b;
+            // Randomly choose operation: 0: Multiplication, 1: Addition
+            const isAddition = Math.random() < 0.5;
+            let a, b, result, operator;
+
+            if (isAddition) {
+                a = Math.floor(Math.random() * ADDITION_LIMIT) + 1;
+                b = Math.floor(Math.random() * ADDITION_LIMIT) + 1;
+                result = a + b;
+                operator = '+';
+            } else {
+                a = Math.floor(Math.random() * MULTIPLICATION_LIMIT) + 1;
+                b = Math.floor(Math.random() * 10) + 1;
+                result = a * b;
+                operator = 'x';
+            }
 
             const aStr = a.toString().padStart(2, ' ');
             const bStr = b.toString().padStart(2, ' ');
             const resStr = result.toString().padStart(2, ' ');
 
-            // Question types: 0: a x b = ?, 1: ? x b = res, 2: a x ? = res
+            // Question types: 0: a op b = ?, 1: ? op b = res, 2: a op ? = res
             // Weights: type 0 is 3x more frequent (3/5), others 1/5 each
             const typePool = [0, 0, 0, 1, 2];
             const type = typePool[Math.floor(Math.random() * typePool.length)];
@@ -212,7 +225,7 @@
             part1.className = 'question';
             const part2 = document.createElement('div');
             part2.className = 'question';
-            part2.textContent = 'x';
+            part2.textContent = operator;
             const part3 = document.createElement('div');
             part3.className = 'question';
             const part4 = document.createElement('div');
