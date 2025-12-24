@@ -1,10 +1,10 @@
-const CACHE_NAME = 'multiplication-v8';
+const CACHE_NAME = 'multiplication-v9';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './icon.svg',
-  './limits.json',
+  './config.json',
   'https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap'
 ];
 

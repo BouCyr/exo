@@ -213,40 +213,51 @@
     </div>
 
     <script>
-        let MULTIPLICATION_LIMIT = 5;
-        let ADDITION_LIMIT = 10;
-        let COMPARISON_LIMIT = 10000;
+        const QuestionType = {
+            MATH: 'math',
+            COMPARISON: 'comparison',
+            MATH_STANDARD: 'math_standard',
+            MATH_INVERSE_A: 'math_inverse_a',
+            MATH_INVERSE_B: 'math_inverse_b'
+        };
 
-        // Load limits from localStorage if available
-        const savedLimits = localStorage.getItem('game-limits');
-        if (savedLimits) {
+        let CONFIG = {
+            MULTIPLICATION_LIMIT: 5,
+            ADDITION_LIMIT: 10,
+            COMPARISON_LIMIT: 10000,
+            FREQUENCIES: {
+                MATH_VS_COMPARISON: 0.9,
+                ADDITION_VS_MULTIPLICATION: 0.5,
+                MATH_TYPE_STANDARD: 3,
+                MATH_TYPE_INVERSE_A: 1,
+                MATH_TYPE_INVERSE_B: 1
+            }
+        };
+
+        // Load config from localStorage if available
+        const savedConfig = localStorage.getItem('game-config');
+        if (savedConfig) {
             try {
-                const parsed = JSON.parse(savedLimits);
-                MULTIPLICATION_LIMIT = parsed.MULTIPLICATION_LIMIT || 5;
-                ADDITION_LIMIT = parsed.ADDITION_LIMIT || 10;
-                COMPARISON_LIMIT = parsed.COMPARISON_LIMIT || 10000;
+                CONFIG = JSON.parse(savedConfig);
             } catch (e) {
-                console.error("Failed to parse saved limits", e);
+                console.error("Failed to parse saved config", e);
             }
         }
 
-        async function fetchLimits() {
+        async function fetchConfig() {
             try {
-                const response = await fetch('./limits.json');
+                const response = await fetch('./config.json');
                 if (response.ok) {
-                    const data = await response.json();
-                    MULTIPLICATION_LIMIT = data.MULTIPLICATION_LIMIT || 5;
-                    ADDITION_LIMIT = data.ADDITION_LIMIT || 10;
-                    COMPARISON_LIMIT = data.COMPARISON_LIMIT || 10000;
-                    localStorage.setItem('game-limits', JSON.stringify(data));
+                    CONFIG = await response.json();
+                    localStorage.setItem('game-config', JSON.stringify(CONFIG));
                 }
             } catch (e) {
                 // Silently fail as requested
-                console.log("Failed to fetch remote limits, using local/default ones.");
+                console.log("Failed to fetch remote config, using local/default ones.");
             }
         }
 
-        fetchLimits();
+        fetchConfig();
         const historyContainer = document.getElementById('history');
         const messageElement = document.getElementById('message');
         const scoreContainer = document.getElementById('score-container');
@@ -349,11 +360,10 @@
                 lines[0].remove();
             }
 
-            // Randomly choose question category
-            // 0: Multiplication/Addition (Frequent), 1: Comparison (Infrequent)
-            const category = Math.random() < 0.9 ? 0 : 1;
+            // Randomly choose question category based on weights
+            const category = Math.random() < CONFIG.FREQUENCIES.MATH_VS_COMPARISON ? QuestionType.MATH : QuestionType.COMPARISON;
 
-            if (category === 0) {
+            if (category === QuestionType.MATH) {
                 generateMathQuestion();
             } else {
                 generateComparisonQuestion();
@@ -361,17 +371,17 @@
         }
 
         function generateMathQuestion() {
-            // Randomly choose operation: 0: Multiplication, 1: Addition
-            const isAddition = Math.random() < 0.5;
+            // Randomly choose operation based on weights
+            const isAddition = Math.random() < CONFIG.FREQUENCIES.ADDITION_VS_MULTIPLICATION;
             let a, b, result, operator;
 
             if (isAddition) {
-                a = Math.floor(Math.random() * ADDITION_LIMIT) + 1;
-                b = Math.floor(Math.random() * ADDITION_LIMIT) + 1;
+                a = Math.floor(Math.random() * CONFIG.ADDITION_LIMIT) + 1;
+                b = Math.floor(Math.random() * CONFIG.ADDITION_LIMIT) + 1;
                 result = a + b;
                 operator = '+';
             } else {
-                a = Math.floor(Math.random() * MULTIPLICATION_LIMIT) + 1;
+                a = Math.floor(Math.random() * CONFIG.MULTIPLICATION_LIMIT) + 1;
                 b = Math.floor(Math.random() * 10) + 1;
                 result = a * b;
                 operator = 'x';
@@ -381,9 +391,12 @@
             const bStr = b.toString().padStart(2, ' ');
             const resStr = result.toString().padStart(2, ' ');
 
-            // Question types: 0: a op b = ?, 1: ? op b = res, 2: a op ? = res
-            // Weights: type 0 is 3x more frequent (3/5), others 1/5 each
-            const typePool = [0, 0, 0, 1, 2];
+            // Weights from config
+            const typePool = [];
+            for (let i = 0; i < CONFIG.FREQUENCIES.MATH_TYPE_STANDARD; i++) typePool.push(QuestionType.MATH_STANDARD);
+            for (let i = 0; i < CONFIG.FREQUENCIES.MATH_TYPE_INVERSE_A; i++) typePool.push(QuestionType.MATH_INVERSE_A);
+            for (let i = 0; i < CONFIG.FREQUENCIES.MATH_TYPE_INVERSE_B; i++) typePool.push(QuestionType.MATH_INVERSE_B);
+            
             const type = typePool[Math.floor(Math.random() * typePool.length)];
 
             const lineDiv = document.createElement('div');
@@ -411,12 +424,12 @@
             input.autofocus = true;
             wrapper.appendChild(input);
 
-            if (type === 0) {
+            if (type === QuestionType.MATH_STANDARD) {
                 part1.textContent = aStr;
                 part3.textContent = bStr;
                 part5.appendChild(wrapper);
                 expectedValue = result;
-            } else if (type === 1) {
+            } else if (type === QuestionType.MATH_INVERSE_A) {
                 part1.appendChild(wrapper);
                 part3.textContent = bStr;
                 part5.textContent = resStr;
@@ -452,7 +465,7 @@
             // 50/50: either numbers look alike or are close
             if (Math.random() < 0.5) {
                 // Numbers look alike (permutation of digits or similar digits)
-                a = Math.floor(Math.random() * COMPARISON_LIMIT);
+                a = Math.floor(Math.random() * CONFIG.COMPARISON_LIMIT);
                 const digits = a.toString().split('');
                 if (digits.length > 1) {
                     // Swap two digits
