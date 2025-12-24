@@ -2,7 +2,7 @@
   "name": "Multiplication Table",
   "short_name": "Multiplication",
   "description": "A simple multiplication game for learning.",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#000000",

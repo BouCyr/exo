@@ -82,6 +82,47 @@
             font-family: 'Roboto Mono', monospace;
             width: 100%;
         }
+        .line.comparison {
+            grid-template-columns: 6rem 1.5rem 6rem;
+            font-size: 1.8rem;
+            gap: 0.5rem;
+        }
+        .choices-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            grid-column: 1 / span 5;
+            margin-top: 0.5rem;
+        }
+        .line.comparison .choices-container {
+            grid-column: 1 / span 3;
+        }
+        .choice-button {
+            background: #222;
+            color: #fff;
+            border: 2px solid #444;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 2rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .choice-button:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+        .choice-button.correct {
+            border-color: transparent;
+            background: transparent;
+            color: #39ff14;
+            font-weight: bold;
+            text-shadow: 0 0 5px #39ff14;
+        }
+        .choice-button.selected-correct {
+            border-color: #39ff14;
+            box-shadow: 0 0 10px #39ff14;
+        }
         .line.fade-out {
             display: none;
         }
@@ -174,6 +215,7 @@
     <script>
         let MULTIPLICATION_LIMIT = 5;
         let ADDITION_LIMIT = 10;
+        let COMPARISON_LIMIT = 10000;
 
         // Load limits from localStorage if available
         const savedLimits = localStorage.getItem('game-limits');
@@ -182,6 +224,7 @@
                 const parsed = JSON.parse(savedLimits);
                 MULTIPLICATION_LIMIT = parsed.MULTIPLICATION_LIMIT || 5;
                 ADDITION_LIMIT = parsed.ADDITION_LIMIT || 10;
+                COMPARISON_LIMIT = parsed.COMPARISON_LIMIT || 10000;
             } catch (e) {
                 console.error("Failed to parse saved limits", e);
             }
@@ -194,6 +237,7 @@
                     const data = await response.json();
                     MULTIPLICATION_LIMIT = data.MULTIPLICATION_LIMIT || 5;
                     ADDITION_LIMIT = data.ADDITION_LIMIT || 10;
+                    COMPARISON_LIMIT = data.COMPARISON_LIMIT || 10000;
                     localStorage.setItem('game-limits', JSON.stringify(data));
                 }
             } catch (e) {
@@ -305,6 +349,18 @@
                 lines[0].remove();
             }
 
+            // Randomly choose question category
+            // 0: Multiplication/Addition (Frequent), 1: Comparison (Infrequent)
+            const category = Math.random() < 0.9 ? 0 : 1;
+
+            if (category === 0) {
+                generateMathQuestion();
+            } else {
+                generateComparisonQuestion();
+            }
+        }
+
+        function generateMathQuestion() {
             // Randomly choose operation: 0: Multiplication, 1: Addition
             const isAddition = Math.random() < 0.5;
             let a, b, result, operator;
@@ -386,20 +442,114 @@
             input.addEventListener('input', () => {
                 const val = parseInt(input.value);
                 if (val === expectedValue) {
-                    playDing();
-                    messageElement.textContent = 'Bravo !';
-                    messageElement.className = 'message success';
-                    input.readOnly = true;
-                    updateScore();
-                    
-                    // Generate next question immediately to avoid losing focus
-                    generateQuestion();
-                    
-                    setTimeout(() => {
-                        messageElement.textContent = '';
-                    }, 400);
+                    onCorrectAnswer(input);
                 }
             });
+        }
+
+        function generateComparisonQuestion() {
+            let a, b;
+            // 50/50: either numbers look alike or are close
+            if (Math.random() < 0.5) {
+                // Numbers look alike (permutation of digits or similar digits)
+                a = Math.floor(Math.random() * COMPARISON_LIMIT);
+                const digits = a.toString().split('');
+                if (digits.length > 1) {
+                    // Swap two digits
+                    const i = Math.floor(Math.random() * digits.length);
+                    let j = Math.floor(Math.random() * digits.length);
+                    while (i === j) j = Math.floor(Math.random() * digits.length);
+                    [digits[i], digits[j]] = [digits[j], digits[i]];
+                } else {
+                    // Single digit, just make b different
+                    b = (a + 1) % 10;
+                }
+                if (b === undefined) {
+                    b = parseInt(digits.join(''));
+                }
+            } else {
+                // Numbers are close
+                a = Math.floor(Math.random() * COMPARISON_LIMIT);
+                const diff = Math.floor(Math.random() * 10) + 1;
+                b = Math.random() < 0.5 ? a + diff : a - diff;
+                if (b < 0) b = a + diff;
+            }
+
+            if (a === b) b = a + 1; // Ensure they are different for < and >
+
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'line comparison';
+
+            const part1 = document.createElement('div');
+            part1.className = 'question';
+            part1.textContent = a;
+
+            const part2 = document.createElement('div');
+            part2.className = 'question';
+            part2.textContent = '?';
+
+            const part3 = document.createElement('div');
+            part3.className = 'question';
+            part3.textContent = b;
+
+            const choicesContainer = document.createElement('div');
+            choicesContainer.className = 'choices-container';
+
+            const btnLess = document.createElement('button');
+            btnLess.className = 'choice-button';
+            btnLess.textContent = '<';
+
+            const btnGreater = document.createElement('button');
+            btnGreater.className = 'choice-button';
+            btnGreater.textContent = '>';
+
+            const correctAnswer = a < b ? '<' : '>';
+
+        const handleChoice = (btn, choice) => {
+            if (choice === correctAnswer) {
+                // Remove the choices container entirely
+                choicesContainer.remove();
+                
+                // Show correct sign in neon green
+                part2.textContent = correctAnswer;
+                part2.style.color = '#39ff14';
+                part2.style.textShadow = '0 0 5px #39ff14';
+                part2.style.fontWeight = 'bold';
+                
+                onCorrectAnswer(btn);
+            }
+        };
+
+            btnLess.onclick = () => handleChoice(btnLess, '<');
+            btnGreater.onclick = () => handleChoice(btnGreater, '>');
+
+            choicesContainer.appendChild(btnLess);
+            choicesContainer.appendChild(btnGreater);
+
+            lineDiv.appendChild(part1);
+            lineDiv.appendChild(part2);
+            lineDiv.appendChild(part3);
+            lineDiv.appendChild(choicesContainer);
+
+            historyContainer.appendChild(lineDiv);
+            btnLess.focus();
+        }
+
+        function onCorrectAnswer(element) {
+            playDing();
+            messageElement.textContent = 'Bravo !';
+            messageElement.className = 'message success';
+            if (element.tagName === 'INPUT') {
+                element.readOnly = true;
+            }
+            updateScore();
+            
+            // Generate next question immediately to avoid losing focus
+            generateQuestion();
+            
+            setTimeout(() => {
+                messageElement.textContent = '';
+            }, 400);
         }
 
         // Initial question

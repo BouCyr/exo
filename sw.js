@@ -1,4 +1,4 @@
-const CACHE_NAME = 'multiplication-v6';
+const CACHE_NAME = 'multiplication-v8';
 const ASSETS = [
   './',
   './index.html',
