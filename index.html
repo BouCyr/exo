@@ -198,6 +198,42 @@
         let expectedValue = 0;
         let activeInput = null;
         let score = 0;
+        let audioCtx = null;
+
+        function playDing() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const now = audioCtx.currentTime;
+
+            function playNote(freq, start, duration, volume) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'triangle'; // Milder than saw, richer than sine
+                osc.frequency.setValueAtTime(freq, start);
+                osc.frequency.exponentialRampToValueAtTime(freq * 1.05, start + duration);
+
+                gain.gain.setValueAtTime(0, start);
+                gain.gain.linearRampToValueAtTime(volume, start + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.01, start + duration);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(start);
+                osc.stop(start + duration);
+            }
+
+            // Upbeat "da-ding!" sound
+            playNote(523.25, now, 0.15, 0.15); // C5
+            playNote(783.99, now + 0.1, 0.3, 0.2); // G5
+        }
 
         // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
@@ -321,6 +357,7 @@
             input.addEventListener('input', () => {
                 const val = parseInt(input.value);
                 if (val === expectedValue) {
+                    playDing();
                     messageElement.textContent = 'Bravo !';
                     messageElement.className = 'message success';
                     input.readOnly = true;
