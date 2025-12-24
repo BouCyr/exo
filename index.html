@@ -74,30 +74,32 @@
             gap: 1rem;
         }
         .line {
-            display: flex;
+            display: grid;
+            grid-template-columns: 3.5rem 1.5rem 3.5rem 1.5rem 4.5rem;
             align-items: center;
             justify-content: center;
             font-size: 2.5rem;
-            gap: 1rem;
             font-family: 'Roboto Mono', monospace;
+            width: 100%;
         }
         .line.fade-out {
             display: none;
         }
         .question {
-            margin-bottom: 0;
+            text-align: center;
             white-space: pre;
         }
         .input-wrapper {
-            position: relative;
             display: flex;
+            justify-content: center;
             align-items: center;
+            width: 100%;
         }
         input {
             font-family: 'Roboto Mono', monospace;
             font-size: 2.5rem;
-            width: 5.5rem;
-            padding: 0.2rem;
+            width: 100%;
+            padding: 0;
             text-align: center;
             border: 2px solid #444;
             background: #222;
@@ -121,17 +123,6 @@
             color: #39ff14;
             font-weight: bold;
             text-shadow: 0 0 5px #39ff14;
-        }
-        .checkmark {
-            color: #39ff14;
-            font-size: 2rem;
-            opacity: 0;
-            margin-left: 0.5rem;
-            font-family: 'Roboto Mono', monospace;
-            text-shadow: 0 0 5px #39ff14;
-        }
-        input:read-only + .checkmark {
-            opacity: 1;
         }
         .message {
             height: 2rem;
@@ -177,7 +168,7 @@
 
         const neonClasses = ['neon-blue', 'neon-pink', 'neon-yellow', 'neon-green'];
 
-        let currentResult = 0;
+        let expectedValue = 0;
         let activeInput = null;
         let score = 0;
 
@@ -203,36 +194,65 @@
 
             const a = Math.floor(Math.random() * TABLE_LIMIT) + 1;
             const b = Math.floor(Math.random() * 10) + 1;
-            currentResult = a * b;
+            const result = a * b;
 
             const aStr = a.toString().padStart(2, ' ');
             const bStr = b.toString().padStart(2, ' ');
+            const resStr = result.toString().padStart(2, ' ');
+
+            // Question types: 0: a x b = ?, 1: ? x b = res, 2: a x ? = res
+            // Weights: type 0 is 3x more frequent (3/5), others 1/5 each
+            const typePool = [0, 0, 0, 1, 2];
+            const type = typePool[Math.floor(Math.random() * typePool.length)];
 
             const lineDiv = document.createElement('div');
             lineDiv.className = 'line';
-            
-            const qDiv = document.createElement('div');
-            qDiv.className = 'question';
-            qDiv.textContent = `${aStr} x ${bStr} =`;
-            
+
+            const part1 = document.createElement('div');
+            part1.className = 'question';
+            const part2 = document.createElement('div');
+            part2.className = 'question';
+            part2.textContent = 'x';
+            const part3 = document.createElement('div');
+            part3.className = 'question';
+            const part4 = document.createElement('div');
+            part4.className = 'question';
+            part4.textContent = '=';
+            const part5 = document.createElement('div');
+            part5.className = 'question';
+
             const wrapper = document.createElement('div');
             wrapper.className = 'input-wrapper';
-
             const input = document.createElement('input');
             input.type = 'number';
             input.inputMode = 'numeric';
             input.placeholder = '?';
             input.autofocus = true;
-
-            const check = document.createElement('span');
-            check.className = 'checkmark';
-            check.textContent = '✓';
-
             wrapper.appendChild(input);
-            wrapper.appendChild(check);
 
-            lineDiv.appendChild(qDiv);
-            lineDiv.appendChild(wrapper);
+            if (type === 0) {
+                part1.textContent = aStr;
+                part3.textContent = bStr;
+                part5.appendChild(wrapper);
+                expectedValue = result;
+            } else if (type === 1) {
+                part1.appendChild(wrapper);
+                part3.textContent = bStr;
+                part5.textContent = resStr;
+                expectedValue = a;
+            } else {
+                part1.textContent = aStr;
+                part3.appendChild(wrapper);
+                part5.textContent = resStr;
+                expectedValue = b;
+            }
+
+            lineDiv.appendChild(part1);
+            lineDiv.appendChild(part2);
+            lineDiv.appendChild(part3);
+            lineDiv.appendChild(part4);
+            lineDiv.appendChild(part5);
+            
             historyContainer.appendChild(lineDiv);
 
             input.focus();
@@ -240,7 +260,7 @@
 
             input.addEventListener('input', () => {
                 const val = parseInt(input.value);
-                if (val === currentResult) {
+                if (val === expectedValue) {
                     messageElement.textContent = 'Bravo !';
                     messageElement.className = 'message success';
                     input.readOnly = true;
