@@ -59,18 +59,43 @@ function generateMultiplicationQuestion() {
 }
 
 function generateSubtractionQuestion() {
-    // b must be between 1 and 10
-    const b = Math.floor(Math.random() * 10) + 1;
-    // result must be > 0, so a > b. 
-    // a should be up to SUBTRACTION_LIMIT, but at least b + 1
-    const minA = b + 1;
-    const rangeA = Math.max(0, CONFIG.SUBTRACTION_LIMIT - minA);
-    const a = Math.floor(Math.random() * (rangeA + 1)) + minA;
+    let a, b;
+    let attempts = 0;
+    const maxAttempts = 100;
+
+    do {
+        // b must be between 1 and 10
+        b = Math.floor(Math.random() * 10) + 1;
+        // result must be > 0, so a > b. 
+        // a should be up to SUBTRACTION_LIMIT, but at least b + 1
+        const minA = b + 1;
+        const rangeA = Math.max(0, CONFIG.SUBTRACTION_LIMIT - minA);
+        a = Math.floor(Math.random() * (rangeA + 1)) + minA;
+        attempts++;
+    } while (hasBorrowing(a, b) && attempts < maxAttempts);
     
     const result = a - b;
     const operator = '-';
 
     renderMathQuestion(a, b, result, operator);
+}
+
+function hasBorrowing(a, b) {
+    const aStr = a.toString();
+    const bStr = b.toString();
+    const lenA = aStr.length;
+    const lenB = bStr.length;
+    
+    const maxLen = Math.max(lenA, lenB);
+    const paddedA = aStr.padStart(maxLen, '0');
+    const paddedB = bStr.padStart(maxLen, '0');
+    
+    for (let i = maxLen - 1; i >= 0; i--) {
+        if (parseInt(paddedA[i]) < parseInt(paddedB[i])) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function renderMathQuestion(a, b, result, operator) {
