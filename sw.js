@@ -1,7 +1,10 @@
-const CACHE_NAME = 'multiplication-v9';
+const CACHE_NAME = 'multiplication-v11';
 const ASSETS = [
   './',
   './index.html',
+  './ui.js',
+  './questions.js',
+  './main.js',
   './manifest.json',
   './icon.svg',
   './config.json',
