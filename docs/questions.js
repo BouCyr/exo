@@ -18,6 +18,14 @@ function generateQuestion() {
         lines[0].remove();
     }
 
+    // Check for fixed questions first
+    if (CONFIG.FIXED_QUESTIONS && currentFixedQuestionIndex < CONFIG.FIXED_QUESTIONS.length) {
+        const q = CONFIG.FIXED_QUESTIONS[currentFixedQuestionIndex];
+        currentFixedQuestionIndex++;
+        renderMathQuestion(q.a, q.b, q.res, q.op);
+        return;
+    }
+
     // Randomly choose question category based on weights
     const roll = Math.random();
     const mathFreq = CONFIG.FREQUENCIES.MATH_VS_COMPARISON;

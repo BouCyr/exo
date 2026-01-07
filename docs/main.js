@@ -12,8 +12,11 @@ let CONFIG = {
         MATH_TYPE_STANDARD: 3,
         MATH_TYPE_LEFT: 1,
         MATH_TYPE_RIGHT: 1
-    }
+    },
+    FIXED_QUESTIONS: []
 };
+
+let currentFixedQuestionIndex = 0;
 
 // Load config from localStorage if available
 const savedConfig = localStorage.getItem('game-config');
