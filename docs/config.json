@@ -1,6 +1,6 @@
 {
   "MULTIPLICATION_MIN": 6,
-  "MULTIPLICATION_MAX": 7,
+  "MULTIPLICATION_MAX": 9,
   "ADDITION_MIN": 1,
   "ADDITION_MAX": 10,
   "SUBTRACTION_MIN": 1,
@@ -33,26 +33,6 @@
     {"type": "multiplication", "a": 7, "b": 7, "op": "x", "res": 49},
     {"type": "multiplication", "a": 7, "b": 8, "op": "x", "res": 56},
     {"type": "multiplication", "a": 7, "b": 9, "op": "x", "res": 63},
-    {"type": "multiplication", "a": 7, "b": 10, "op": "x", "res": 70},
-    {"type": "multiplication", "a": 8, "b": 1, "op": "x", "res": 8},
-    {"type": "multiplication", "a": 8, "b": 2, "op": "x", "res": 16},
-    {"type": "multiplication", "a": 8, "b": 3, "op": "x", "res": 24},
-    {"type": "multiplication", "a": 8, "b": 4, "op": "x", "res": 32},
-    {"type": "multiplication", "a": 8, "b": 5, "op": "x", "res": 40},
-    {"type": "multiplication", "a": 8, "b": 6, "op": "x", "res": 48},
-    {"type": "multiplication", "a": 8, "b": 7, "op": "x", "res": 56},
-    {"type": "multiplication", "a": 8, "b": 8, "op": "x", "res": 64},
-    {"type": "multiplication", "a": 8, "b": 9, "op": "x", "res": 72},
-    {"type": "multiplication", "a": 8, "b": 10, "op": "x", "res": 80},
-    {"type": "multiplication", "a": 9, "b": 1, "op": "x", "res": 9},
-    {"type": "multiplication", "a": 9, "b": 2, "op": "x", "res": 18},
-    {"type": "multiplication", "a": 9, "b": 3, "op": "x", "res": 27},
-    {"type": "multiplication", "a": 9, "b": 4, "op": "x", "res": 36},
-    {"type": "multiplication", "a": 9, "b": 5, "op": "x", "res": 45},
-    {"type": "multiplication", "a": 9, "b": 6, "op": "x", "res": 54},
-    {"type": "multiplication", "a": 9, "b": 7, "op": "x", "res": 63},
-    {"type": "multiplication", "a": 9, "b": 8, "op": "x", "res": 72},
-    {"type": "multiplication", "a": 9, "b": 9, "op": "x", "res": 81},
-    {"type": "multiplication", "a": 9, "b": 10, "op": "x", "res": 90}
+    {"type": "multiplication", "a": 7, "b": 10, "op": "x", "res": 70}
   ]
 }
