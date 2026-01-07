@@ -41,8 +41,10 @@ function generateQuestion() {
 }
 
 function generateAdditionQuestion() {
-    const a = Math.floor(Math.random() * CONFIG.ADDITION_LIMIT) + 1;
-    const b = Math.floor(Math.random() * CONFIG.ADDITION_LIMIT) + 1;
+    const rangeA = CONFIG.ADDITION_MAX - CONFIG.ADDITION_MIN;
+    const a = Math.floor(Math.random() * (rangeA + 1)) + CONFIG.ADDITION_MIN;
+    const rangeB = CONFIG.ADDITION_MAX - CONFIG.ADDITION_MIN;
+    const b = Math.floor(Math.random() * (rangeB + 1)) + CONFIG.ADDITION_MIN;
     const result = a + b;
     const operator = '+';
 
@@ -50,7 +52,8 @@ function generateAdditionQuestion() {
 }
 
 function generateMultiplicationQuestion() {
-    const a = Math.floor(Math.random() * CONFIG.MULTIPLICATION_LIMIT) + 1;
+    const rangeA = CONFIG.MULTIPLICATION_MAX - CONFIG.MULTIPLICATION_MIN;
+    const a = Math.floor(Math.random() * (rangeA + 1)) + CONFIG.MULTIPLICATION_MIN;
     const b = Math.floor(Math.random() * 10) + 1;
     const result = a * b;
     const operator = 'x';
@@ -67,9 +70,9 @@ function generateSubtractionQuestion() {
         // b must be between 1 and 10
         b = Math.floor(Math.random() * 10) + 1;
         // result must be > 0, so a > b. 
-        // a should be up to SUBTRACTION_LIMIT, but at least b + 1
-        const minA = b + 1;
-        const rangeA = Math.max(0, CONFIG.SUBTRACTION_LIMIT - minA);
+        // a should be up to SUBTRACTION_MAX, but at least SUBTRACTION_MIN and at least b + 1
+        const minA = Math.max(CONFIG.SUBTRACTION_MIN, b + 1);
+        const rangeA = Math.max(0, CONFIG.SUBTRACTION_MAX - minA);
         a = Math.floor(Math.random() * (rangeA + 1)) + minA;
         attempts++;
     } while (hasBorrowing(a, b) && attempts < maxAttempts);
