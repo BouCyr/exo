@@ -1,5 +1,5 @@
 {
-  "MULTIPLICATION_MIN": 6,
+  "MULTIPLICATION_MIN": 1,
   "MULTIPLICATION_MAX": 9,
   "ADDITION_MIN": 1,
   "ADDITION_MAX": 10,
@@ -9,30 +9,12 @@
   "FREQUENCIES": {
     "MATH_VS_COMPARISON": 1.0,
     "ADDITION_VS_MULTIPLICATION_VS_SUBTRACTION": [0, 1, 0],
-    "MATH_TYPE_STANDARD": 300,
+    "MATH_TYPE_STANDARD": 3000,
     "MATH_TYPE_LEFT": 1,
     "MATH_TYPE_RIGHT": 1
   },
   "FIXED_QUESTIONS": [
     {"type": "multiplication", "a": 6, "b": 1, "op": "x", "res": 6},
-    {"type": "multiplication", "a": 6, "b": 2, "op": "x", "res": 12},
-    {"type": "multiplication", "a": 6, "b": 3, "op": "x", "res": 18},
-    {"type": "multiplication", "a": 6, "b": 4, "op": "x", "res": 24},
-    {"type": "multiplication", "a": 6, "b": 5, "op": "x", "res": 30},
-    {"type": "multiplication", "a": 6, "b": 6, "op": "x", "res": 36},
-    {"type": "multiplication", "a": 6, "b": 7, "op": "x", "res": 42},
-    {"type": "multiplication", "a": 6, "b": 8, "op": "x", "res": 48},
-    {"type": "multiplication", "a": 6, "b": 9, "op": "x", "res": 54},
-    {"type": "multiplication", "a": 6, "b": 10, "op": "x", "res": 60},
-    {"type": "multiplication", "a": 7, "b": 1, "op": "x", "res": 7},
-    {"type": "multiplication", "a": 7, "b": 2, "op": "x", "res": 14},
-    {"type": "multiplication", "a": 7, "b": 3, "op": "x", "res": 21},
-    {"type": "multiplication", "a": 7, "b": 4, "op": "x", "res": 28},
-    {"type": "multiplication", "a": 7, "b": 5, "op": "x", "res": 35},
-    {"type": "multiplication", "a": 7, "b": 6, "op": "x", "res": 42},
-    {"type": "multiplication", "a": 7, "b": 7, "op": "x", "res": 49},
-    {"type": "multiplication", "a": 7, "b": 8, "op": "x", "res": 56},
-    {"type": "multiplication", "a": 7, "b": 9, "op": "x", "res": 63},
     {"type": "multiplication", "a": 7, "b": 10, "op": "x", "res": 70}
   ]
 }
