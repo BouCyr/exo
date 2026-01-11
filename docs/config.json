@@ -14,7 +14,7 @@
     "MATH_TYPE_RIGHT": 1
   },
   "FIXED_QUESTIONS": [
-    {"type": "multiplication", "a": 6, "b": 1, "op": "x", "res": 6},
-    {"type": "multiplication", "a": 7, "b": 10, "op": "x", "res": 70}
+    {"type": "multiplication", "a": 2, "b": 1, "op": "x", "res": 2},
+    {"type": "multiplication", "a": 3, "b": 5, "op": "x", "res": 15}
   ]
 }
