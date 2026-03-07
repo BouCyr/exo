@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .question-card h3 {
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        button {
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: 1px solid #007bff;
+            background-color: white;
+            color: #007bff;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        button:hover:not(:disabled) {
+            background-color: #007bff;
+            color: white;
+        }
+        button:disabled {
+            border-color: #ccc;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        input {
+            padding: 12px;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        .help-btn {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+            width: 100%;
+        }
+        .help-btn:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <h1>Quiz</h1>
+        <div id="quiz-container">
+            Loading questions...
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentIndex = 0;
+
+        async function fetchQuestions() {
+            try {
+                const response = await fetch('/api/questions');
+                questions = await response.json();
+                renderQuestion();
+            } catch (error) {
+                console.error('Error fetching questions:', error);
+                document.getElementById('quiz-container').innerText = 'Failed to load questions.';
+            }
+        }
+
+        function renderQuestion() {
+            if (currentIndex >= questions.length) {
+                document.getElementById('quiz-container').innerHTML = '<h2>Quiz Finished!</h2>';
+                return;
+            }
+
+            const q = questions[currentIndex];
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            const card = document.createElement('div');
+            card.className = 'question-card';
+
+            const questionTitle = document.createElement('h3');
+            questionTitle.innerText = q.question;
+            card.appendChild(questionTitle);
+
+            if (q.type === 'QCM') {
+                renderQCM(q, card);
+            } else if (q.type === 'Open') {
+                renderOpen(q, card);
+            }
+
+            container.appendChild(card);
+        }
+
+        function renderQCM(q, card) {
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options';
+
+            const allAnswers = [...q.wrongAnswers, q.answer];
+            // Shuffle
+            allAnswers.sort(() => Math.random() - 0.5);
+
+            allAnswers.forEach(answer => {
+                const btn = document.createElement('button');
+                btn.innerText = answer;
+                btn.onclick = () => {
+                    if (answer === q.answer) {
+                        currentIndex++;
+                        renderQuestion();
+                    } else {
+                        btn.disabled = true;
+                    }
+                };
+                optionsDiv.appendChild(btn);
+            });
+
+            card.appendChild(optionsDiv);
+        }
+
+        function renderOpen(q, card) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Type your answer here...';
+            input.oninput = () => {
+                if (input.value.trim().toLowerCase() === q.answer.toLowerCase()) {
+                    currentIndex++;
+                    renderQuestion();
+                }
+            };
+            card.appendChild(input);
+
+            const helpBtn = document.createElement('button');
+            helpBtn.className = 'help-btn';
+            helpBtn.innerText = 'Help me';
+            helpBtn.onclick = () => {
+                q.type = 'QCM';
+                renderQuestion();
+            };
+            card.appendChild(helpBtn);
+        }
+
+        fetchQuestions();
+    </script>
+</body>
+</html>
