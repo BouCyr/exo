@@ -2,23 +2,24 @@
   "name": "Multiplication Table",
   "short_name": "Multiplication",
   "description": "A simple multiplication game for learning.",
-  "version": "1.0._",
-  "start_url": ".",
+  "id": "./",
+  "scope": "./",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
   "icons": [
     {
       "src": "icon.svg",
-      "sizes": "192x192",
+      "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "icon.svg",
-      "sizes": "512x512",
+      "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ]
 }
