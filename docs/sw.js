@@ -1,4 +1,4 @@
-const CACHE_NAME = 'multiplication-v14';
+const CACHE_NAME = 'multiplication-v15';
 const ASSETS = [
   './',
   './index.html',
@@ -6,7 +6,7 @@ const ASSETS = [
   './questions.js',
   './main.js',
   './manifest.json',
-  './icon.svg',
+  './icon-180.png',
   './config.json',
   'https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap'
 ];
